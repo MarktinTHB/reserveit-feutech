@@ -54,7 +54,7 @@
   background-color: var(--color-primary-50);
 }
 
-.dark .cardUnread {
+:global(.dark) .cardUnread {
   border-color: var(--color-primary-800);
   background-color: var(--color-primary-950);
 }

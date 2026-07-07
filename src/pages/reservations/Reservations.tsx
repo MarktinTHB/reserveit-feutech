@@ -8,7 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { Link } from "react-router-dom";
-import { CalendarDays, Eye, Plus, Search } from "lucide-react";
+import { CalendarDays, Eye, Plus, Search, FileText } from "lucide-react";
 import type { Reservation } from "@/types";
 import { formatDate } from "@/lib/utils";
 import styles from "./Reservations.module.css";
@@ -150,6 +150,47 @@ export function Reservations() {
               <StatusChip status={selectedReservation.status} />
             </div>
 
+            {/* Progress Timeline */}
+            <div style={{ marginBottom: "var(--space-6)" }}>
+              {(() => {
+                const isDenied = selectedReservation.status === "rejected";
+                const isRevision = selectedReservation.status === "revision_requested";
+                const steps = isDenied
+                  ? [{ status: "pending", label: "Pending" }, { status: "reviewed", label: "Reviewed" }, { status: "rejected", label: "Denied" }]
+                  : isRevision
+                    ? [{ status: "pending", label: "Pending" }, { status: "reviewed", label: "Reviewed" }, { status: "revision_requested", label: "Revision" }]
+                    : [{ status: "pending", label: "Pending" }, { status: "reviewed", label: "Reviewed" }, { status: "processing", label: "Processing" }, { status: "approved", label: "Approved" }, { status: "completed", label: "Completed" }];
+                const currentIndex = steps.findIndex((s) => s.status === selectedReservation.status);
+                return (
+                  <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", flexWrap: "wrap" }}>
+                    {steps.map((step, i) => {
+                      const isComplete = i <= currentIndex;
+                      const isCurrent = i === currentIndex;
+                      return (
+                        <div key={step.status} style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
+                          <div style={{
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            width: "1.5rem", height: "1.5rem", borderRadius: "var(--radius-full)",
+                            fontSize: "var(--text-xs)", fontWeight: "var(--font-semibold)",
+                            backgroundColor: isComplete ? (step.status === "rejected" ? "var(--color-error-500)" : step.status === "revision_requested" ? "var(--color-warning-500)" : "var(--brand)") : "var(--bg-muted)",
+                            color: isComplete ? "#fff" : "var(--text-muted)",
+                          }}>
+                            {isComplete ? "✓" : i + 1}
+                          </div>
+                          <span style={{ fontSize: "var(--text-sm)", fontWeight: isCurrent ? "var(--font-semibold)" : "var(--font-normal)", color: isComplete ? "var(--text-primary)" : "var(--text-muted)" }}>
+                            {step.label}
+                          </span>
+                          {i < steps.length - 1 && (
+                            <div style={{ width: "1.5rem", height: "2px", backgroundColor: i < currentIndex ? "var(--brand)" : "var(--border-default)" }} />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+
             <div className={styles.detailGrid}>
               <div className={styles.detailItem}>
                 <p className={styles.detailLabel}>Activity Date</p>
@@ -196,13 +237,30 @@ export function Reservations() {
               </div>
             )}
 
+            {selectedReservation.documents && selectedReservation.documents.length > 0 && (
+              <div className={styles.detailSection}>
+                <p className={styles.detailSectionLabel}>Supporting Documents</p>
+                <div className={styles.documentList}>
+                  {selectedReservation.documents.map((doc) => (
+                    <div key={doc.id} className={styles.documentItem}>
+                      <FileText size={20} style={{ color: "var(--brand)", flexShrink: 0 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p className={styles.documentName}>{doc.file_name}</p>
+                        <p className={styles.documentMeta}>{doc.document_type}{doc.file_size ? ` · ${(doc.file_size / 1024).toFixed(1)} KB` : ""}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {selectedReservation.approvals && selectedReservation.approvals.length > 0 && (
               <div className={styles.detailSection}>
                 <p className={styles.detailSectionLabel}>Approval History</p>
                 <div>
                   {selectedReservation.approvals.map((ap) => (
                     <div key={ap.id} className={styles.approvalItem}>
-                      <Badge variant={ap.action === "approved" ? "success" : ap.action === "rejected" ? "error" : "info"}>
+                      <Badge variant={ap.action === "approved" ? "success" : ap.action === "rejected" ? "error" : ap.action === "completed" ? "accent" : "info"}>
                         {ap.action}
                       </Badge>
                       <span className={styles.approvalComment}>{ap.comments}</span>

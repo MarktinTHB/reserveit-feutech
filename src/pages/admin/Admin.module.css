@@ -139,7 +139,7 @@
   color: var(--color-error-600);
 }
 
-.dark .iconButtonDanger:hover {
+:global(.dark) .iconButtonDanger:hover {
   background-color: var(--color-error-950);
 }
 

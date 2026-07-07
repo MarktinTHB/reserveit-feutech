@@ -1,6 +1,6 @@
 export type UserRole = "student" | "officer" | "faculty" | "admin";
 
-export type ReservationStatus = "pending" | "approved" | "rejected" | "revision_requested" | "cancelled" | "completed";
+export type ReservationStatus = "pending" | "reviewed" | "processing" | "approved" | "rejected" | "revision_requested" | "cancelled" | "completed";
 
 export interface Facility {
   id: string;
@@ -66,6 +66,8 @@ export interface ReservationDocument {
   document_type: string;
   file_name: string;
   file_url: string;
+  file_size: number | null;
+  file_type: string | null;
   uploaded_at: string;
 }
 

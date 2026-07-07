@@ -8,11 +8,13 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
 import { Textarea } from "@/components/ui/Textarea";
+import { StatusChip } from "@/components/ui/StatusChip";
 import {
   Shield, Building2, Users, ClipboardList, Settings,
-  Plus, Pencil, Trash2,
+  Plus, Pencil, Trash2, Eye, Check, X, AlertCircle, Clock, FileText, Download, MapPin,
 } from "lucide-react";
-import type { Facility } from "@/types";
+import type { Facility, Reservation } from "@/types";
+import { formatDate, formatDateTime } from "@/lib/utils";
 import styles from "./Admin.module.css";
 
 export function AdminPage() {
@@ -25,6 +27,9 @@ export function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [showFacilityModal, setShowFacilityModal] = useState(false);
   const [editingFacility, setEditingFacility] = useState<Facility | null>(null);
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+  const [adminComments, setAdminComments] = useState("");
+  const [adminProcessing, setAdminProcessing] = useState(false);
 
   const [facilityForm, setFacilityForm] = useState({
     name: "", department: "", type: "indoor", capacity: "",
@@ -44,7 +49,7 @@ export function AdminPage() {
       const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
       if (data) setUsers(data);
     } else if (activeTab === "reservations") {
-      const { data } = await supabase.from("reservations").select("*, profiles(full_name, email)").order("created_at", { ascending: false });
+      const { data } = await supabase.from("reservations").select("*, profiles(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles(full_name))").order("created_at", { ascending: false });
       if (data) setReservations(data);
     }
     setLoading(false);
@@ -85,6 +90,56 @@ export function AdminPage() {
     } else {
       showToast(`User role updated to ${newRole}`, "success");
     }
+    fetchData();
+  };
+
+  const handleAdminAction = async (action: string) => {
+    if (!selectedReservation) return;
+    setAdminProcessing(true);
+
+    const statusMap: Record<string, string> = {
+      reviewed: "reviewed",
+      processing: "processing",
+      approve: "approved",
+      reject: "rejected",
+      revision: "revision_requested",
+      complete: "completed",
+    };
+    const newStatus = statusMap[action] || action;
+
+    const { error: resError } = await supabase
+      .from("reservations")
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .eq("id", selectedReservation.id);
+
+    if (resError) {
+      showToast(resError.message, "error");
+      setAdminProcessing(false);
+      return;
+    }
+
+    await supabase.from("approvals").insert({
+      reservation_id: selectedReservation.id,
+      approver_id: user?.id,
+      action: newStatus,
+      comments: adminComments || null,
+    });
+
+    const notifType = action === "approve" || action === "complete" ? "success" : action === "reject" ? "error" : action === "revision" ? "warning" : "info";
+    const notifTitle = `Reservation ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`;
+    await supabase.from("notifications").insert({
+      user_id: selectedReservation.user_id,
+      title: notifTitle,
+      message: `Your reservation "${selectedReservation.activity_name}" has been updated to: ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}.${adminComments ? ` Comments: ${adminComments}` : ""}`,
+      type: notifType,
+      related_id: selectedReservation.id,
+      related_type: "reservation",
+    });
+
+    showToast(`Reservation ${newStatus}`, "success");
+    setSelectedReservation(null);
+    setAdminComments("");
+    setAdminProcessing(false);
     fetchData();
   };
 
@@ -250,11 +305,14 @@ export function AdminPage() {
                   <div key={res.id as string} className={styles.listItem}>
                     <div className={styles.listItemInfo}>
                       <p className={styles.listItemName}>{res.activity_name as string}</p>
-                      <p className={styles.listItemEmail}>{profiles?.full_name || profiles?.email || "Unknown"} · {res.department as string}</p>
+                      <p className={styles.listItemEmail}>{profiles?.full_name || profiles?.email || "Unknown"} · {res.department as string} · {formatDate(res.activity_date as string)}</p>
                     </div>
-                    <Badge variant={res.status === "approved" ? "success" : res.status === "rejected" ? "error" : "warning"}>
-                      {res.status as string}
-                    </Badge>
+                    <div className={styles.listItemActions}>
+                      <StatusChip status={res.status as string} />
+                      <Button variant="ghost" size="sm" onClick={() => { setSelectedReservation(r as unknown as Reservation); setAdminComments(""); }}>
+                        <Eye size={16} /> Review
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
@@ -300,6 +358,128 @@ export function AdminPage() {
             <Button onClick={handleSaveFacility}>{editingFacility ? "Update" : "Create"}</Button>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        isOpen={!!selectedReservation}
+        onClose={() => { setSelectedReservation(null); setAdminComments(""); }}
+        title="Review Reservation"
+        size="lg"
+      >
+        {selectedReservation && (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
+              <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--font-bold)", color: "var(--text-primary)" }}>
+                {selectedReservation.activity_name}
+              </h2>
+              <StatusChip status={selectedReservation.status} />
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)", marginBottom: "var(--space-4)" }}>
+              <div><p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)" }}>Activity Date</p><p style={{ fontWeight: "var(--font-medium)", color: "var(--text-primary)" }}>{formatDate(selectedReservation.activity_date)}</p></div>
+              <div><p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)" }}>Department</p><p style={{ fontWeight: "var(--font-medium)", color: "var(--text-primary)" }}>{selectedReservation.department}</p></div>
+              <div><p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)" }}>Duration</p><p style={{ fontWeight: "var(--font-medium)", color: "var(--text-primary)" }}>{selectedReservation.event_duration} hours</p></div>
+              <div><p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)" }}>Participants</p><p style={{ fontWeight: "var(--font-medium)", color: "var(--text-primary)" }}>{selectedReservation.total_attendees} total</p></div>
+            </div>
+
+            <div style={{ marginBottom: "var(--space-4)" }}>
+              <p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)", marginBottom: "var(--space-1)" }}>Purpose</p>
+              <p style={{ color: "var(--text-primary)" }}>{selectedReservation.purpose}</p>
+            </div>
+
+            {selectedReservation.setup_instructions && (
+              <div style={{ marginBottom: "var(--space-4)" }}>
+                <p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)", marginBottom: "var(--space-1)" }}>Setup Instructions</p>
+                <p style={{ color: "var(--text-primary)" }}>{selectedReservation.setup_instructions}</p>
+              </div>
+            )}
+
+            {selectedReservation.venues && selectedReservation.venues.length > 0 && (
+              <div style={{ marginBottom: "var(--space-4)" }}>
+                <p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)", marginBottom: "var(--space-2)" }}>Venues</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)" }}>
+                  {selectedReservation.venues.map((v) => (
+                    <Badge key={v.id} variant="default"><MapPin size={12} style={{ marginRight: "4px" }} />{v.facility?.name || "Unknown"}</Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedReservation.equipment && selectedReservation.equipment.length > 0 && (
+              <div style={{ marginBottom: "var(--space-4)" }}>
+                <p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)", marginBottom: "var(--space-2)" }}>Equipment</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)" }}>
+                  {selectedReservation.equipment.map((eq) => (
+                    <Badge key={eq.id} variant="info">{eq.equipment_name} x{eq.quantity}</Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedReservation.documents && selectedReservation.documents.length > 0 && (
+              <div style={{ marginBottom: "var(--space-4)" }}>
+                <p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)", marginBottom: "var(--space-2)" }}>Supporting Documents</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+                  {selectedReservation.documents.map((doc) => (
+                    <div key={doc.id} style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", padding: "var(--space-3)", borderRadius: "var(--radius-lg)", backgroundColor: "var(--bg-muted)", border: "1px solid var(--border-default)" }}>
+                      <FileText size={20} style={{ color: "var(--brand)", flexShrink: 0 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: "var(--text-sm)", fontWeight: "var(--font-medium)", color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{doc.file_name}</p>
+                        <p style={{ fontSize: "var(--text-xs)", color: "var(--text-tertiary)" }}>{doc.document_type}{doc.file_size ? ` · ${(doc.file_size / 1024).toFixed(1)} KB` : ""}</p>
+                      </div>
+                      {doc.file_url && doc.file_url !== "#" && (
+                        <a href={doc.file_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--brand)" }}><Download size={16} /></a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedReservation.approvals && selectedReservation.approvals.length > 0 && (
+              <div style={{ marginBottom: "var(--space-4)" }}>
+                <p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)", marginBottom: "var(--space-2)" }}>Approval History</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+                  {selectedReservation.approvals.map((ap) => (
+                    <div key={ap.id} style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-2)", padding: "var(--space-2)", borderRadius: "var(--radius-md)", backgroundColor: "var(--bg-muted)" }}>
+                      <Badge variant={ap.action === "approved" ? "success" : ap.action === "rejected" ? "error" : ap.action === "completed" ? "accent" : "info"}>{ap.action}</Badge>
+                      <div style={{ flex: 1 }}>
+                        {ap.comments && <p style={{ fontSize: "var(--text-sm)", color: "var(--text-secondary)" }}>{ap.comments}</p>}
+                        <p style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>by {ap.approver?.full_name || "System"} · {formatDateTime(ap.created_at)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={{ marginBottom: "var(--space-4)" }}>
+              <p style={{ fontSize: "var(--text-sm)", color: "var(--text-tertiary)", marginBottom: "var(--space-1)" }}>Comments</p>
+              <Textarea placeholder="Add comments for the requester..." value={adminComments} onChange={(e) => setAdminComments(e.target.value)} />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)", flexWrap: "wrap" }}>
+              {selectedReservation.status === "pending" && (
+                <Button variant="secondary" onClick={() => handleAdminAction("reviewed")} isLoading={adminProcessing}><Check size={16} /> Mark Reviewed</Button>
+              )}
+              {selectedReservation.status === "reviewed" && (
+                <Button variant="secondary" onClick={() => handleAdminAction("processing")} isLoading={adminProcessing}><Clock size={16} /> Start Processing</Button>
+              )}
+              {selectedReservation.status === "processing" && (
+                <Button onClick={() => handleAdminAction("approve")} isLoading={adminProcessing}><Check size={16} /> Approve</Button>
+              )}
+              {selectedReservation.status === "approved" && (
+                <Button onClick={() => handleAdminAction("complete")} isLoading={adminProcessing}><Check size={16} /> Mark Completed</Button>
+              )}
+              {(selectedReservation.status === "pending" || selectedReservation.status === "reviewed" || selectedReservation.status === "processing") && (
+                <>
+                  <Button variant="secondary" onClick={() => handleAdminAction("revision")} isLoading={adminProcessing}><AlertCircle size={16} /> Request Revision</Button>
+                  <Button variant="danger" onClick={() => handleAdminAction("reject")} isLoading={adminProcessing}><X size={16} /> Deny</Button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

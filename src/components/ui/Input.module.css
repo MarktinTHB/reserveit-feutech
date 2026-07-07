@@ -55,7 +55,7 @@
   color: var(--color-error-600);
 }
 
-.dark .errorMessage {
+:global(.dark) .errorMessage {
   color: var(--color-error-400);
 }
 

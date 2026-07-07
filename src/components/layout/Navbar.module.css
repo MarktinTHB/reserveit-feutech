@@ -9,7 +9,7 @@
   transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
-.dark .header {
+:global(.dark) .header {
   background-color: rgba(15, 23, 42, 0.8);
 }
 
@@ -189,7 +189,7 @@
   transition: background-color var(--transition-fast);
 }
 
-.dark .signOut {
+:global(.dark) .signOut {
   color: var(--color-error-400);
 }
 
@@ -197,7 +197,7 @@
   background-color: var(--color-error-50);
 }
 
-.dark .signOut:hover {
+:global(.dark) .signOut:hover {
   background-color: var(--color-error-950);
 }
 

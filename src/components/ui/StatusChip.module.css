@@ -23,9 +23,31 @@
 }
 .pending .dot { background-color: var(--color-warning-500); }
 
-.dark .pending {
+:global(.dark) .pending {
   background-color: var(--color-warning-950);
   color: var(--color-warning-200);
+}
+
+.reviewed {
+  background-color: var(--color-info-100);
+  color: var(--color-info-800);
+}
+.reviewed .dot { background-color: var(--color-info-500); }
+
+:global(.dark) .reviewed {
+  background-color: var(--color-info-950);
+  color: var(--color-info-200);
+}
+
+.processing {
+  background-color: var(--color-secondary-100);
+  color: var(--color-secondary-800);
+}
+.processing .dot { background-color: var(--color-secondary-500); }
+
+:global(.dark) .processing {
+  background-color: var(--color-secondary-950);
+  color: var(--color-secondary-200);
 }
 
 .approved {
@@ -34,7 +56,7 @@
 }
 .approved .dot { background-color: var(--color-success-500); }
 
-.dark .approved {
+:global(.dark) .approved {
   background-color: var(--color-success-950);
   color: var(--color-success-200);
 }
@@ -45,7 +67,7 @@
 }
 .rejected .dot { background-color: var(--color-error-500); }
 
-.dark .rejected {
+:global(.dark) .rejected {
   background-color: var(--color-error-950);
   color: var(--color-error-200);
 }
@@ -56,7 +78,7 @@
 }
 .revision .dot { background-color: var(--color-info-500); }
 
-.dark .revision {
+:global(.dark) .revision {
   background-color: var(--color-info-950);
   color: var(--color-info-200);
 }
@@ -67,7 +89,7 @@
 }
 .cancelled .dot { background-color: var(--color-neutral-400); }
 
-.dark .cancelled {
+:global(.dark) .cancelled {
   background-color: var(--color-neutral-800);
   color: var(--color-neutral-300);
 }
@@ -78,7 +100,7 @@
 }
 .completed .dot { background-color: var(--color-accent-500); }
 
-.dark .completed {
+:global(.dark) .completed {
   background-color: var(--color-accent-950);
   color: var(--color-accent-200);
 }

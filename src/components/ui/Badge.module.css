@@ -15,7 +15,7 @@
   color: var(--color-neutral-700);
 }
 
-.dark .default {
+:global(.dark) .default {
   background-color: var(--color-neutral-800);
   color: var(--color-neutral-200);
 }
@@ -25,7 +25,7 @@
   color: var(--color-success-800);
 }
 
-.dark .success {
+:global(.dark) .success {
   background-color: var(--color-success-950);
   color: var(--color-success-200);
 }
@@ -35,7 +35,7 @@
   color: var(--color-warning-800);
 }
 
-.dark .warning {
+:global(.dark) .warning {
   background-color: var(--color-warning-950);
   color: var(--color-warning-200);
 }
@@ -45,7 +45,7 @@
   color: var(--color-error-800);
 }
 
-.dark .error {
+:global(.dark) .error {
   background-color: var(--color-error-950);
   color: var(--color-error-200);
 }
@@ -55,7 +55,7 @@
   color: var(--color-info-800);
 }
 
-.dark .info {
+:global(.dark) .info {
   background-color: var(--color-info-950);
   color: var(--color-info-200);
 }
@@ -65,7 +65,7 @@
   color: var(--color-accent-800);
 }
 
-.dark .accent {
+:global(.dark) .accent {
   background-color: var(--color-accent-950);
   color: var(--color-accent-200);
 }

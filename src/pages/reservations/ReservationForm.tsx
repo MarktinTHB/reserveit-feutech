@@ -28,7 +28,7 @@ interface FormData {
   egress_date: string;
   selectedVenues: string[];
   selectedEquipment: { name: string; quantity: number; notes: string }[];
-  documents: { type: string; fileName: string }[];
+  documents: { type: string; file: File | null; fileName: string }[];
 }
 
 export function ReservationForm() {
@@ -73,11 +73,16 @@ export function ReservationForm() {
 
   const addDocument = (type: string) => {
     if (form.documents.find((d) => d.type === type)) return;
-    setForm((prev) => ({ ...prev, documents: [...prev.documents, { type, fileName: "" }] }));
+    setForm((prev) => ({ ...prev, documents: [...prev.documents, { type, file: null, fileName: "" }] }));
   };
 
-  const updateDocument = (type: string, fileName: string) => {
-    setForm((prev) => ({ ...prev, documents: prev.documents.map((d) => d.type === type ? { ...d, fileName } : d) }));
+  const updateDocumentFile = (type: string, file: File) => {
+    setForm((prev) => ({
+      ...prev,
+      documents: prev.documents.map((d) =>
+        d.type === type ? { ...d, file, fileName: file.name } : d
+      ),
+    }));
   };
 
   const removeDocument = (type: string) => {
@@ -95,6 +100,7 @@ export function ReservationForm() {
         return true;
       case 4:
         if (form.documents.length === 0) { showToast("Please upload at least one supporting document", "warning"); return false; }
+        if (form.documents.some((d) => !d.file)) { showToast("Please select a file for each added document type", "warning"); return false; }
         return true;
       case 6:
         if (!form.ingress_date || !form.egress_date) { showToast("Please specify ingress and egress dates", "warning"); return false; }
@@ -135,7 +141,34 @@ export function ReservationForm() {
     }
 
     for (const doc of form.documents) {
-      await supabase.from("reservation_documents").insert({ reservation_id: reservationId, document_type: doc.type, file_name: doc.fileName || doc.type, file_url: "#" });
+      let fileUrl = "#";
+      let fileSize: number | null = null;
+      let fileType: string | null = null;
+
+      if (doc.file) {
+        const filePath = `${user.id}/${reservationId}/${doc.type.replace(/\s+/g, "_")}_${doc.file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("reservation-documents")
+          .upload(filePath, doc.file, { upsert: true });
+
+        if (!uploadError && uploadData) {
+          const { data: urlData } = supabase.storage
+            .from("reservation-documents")
+            .getPublicUrl(filePath);
+          fileUrl = urlData?.publicUrl || "#";
+        }
+        fileSize = doc.file.size;
+        fileType = doc.file.type;
+      }
+
+      await supabase.from("reservation_documents").insert({
+        reservation_id: reservationId,
+        document_type: doc.type,
+        file_name: doc.fileName || doc.type,
+        file_url: fileUrl,
+        file_size: fileSize,
+        file_type: fileType,
+      });
     }
 
     await supabase.from("notifications").insert({
@@ -251,7 +284,18 @@ export function ReservationForm() {
               <div key={doc.type} className={styles.documentRow}>
                 <Badge variant="info">{doc.type}</Badge>
                 <div className={styles.documentInput}>
-                  <Input placeholder="File name (simulated upload)" value={doc.fileName} onChange={(e) => updateDocument(doc.type, e.target.value)} />
+                  <input
+                    type="file"
+                    id={`file-${doc.type}`}
+                    className={styles.fileInput}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) updateDocumentFile(doc.type, file);
+                    }}
+                  />
+                  <label htmlFor={`file-${doc.type}`} className={styles.fileLabel}>
+                    {doc.fileName || "Choose file..."}
+                  </label>
                 </div>
                 <button onClick={() => removeDocument(doc.type)} className={styles.removeButton}>Remove</button>
               </div>

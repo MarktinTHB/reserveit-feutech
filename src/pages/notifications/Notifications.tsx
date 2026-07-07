@@ -1,13 +1,15 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { CheckCircle, XCircle, AlertCircle, Info, Bell, CheckCheck } from "lucide-react";
+import { CheckCircle, XCircle, AlertCircle, Info, Bell, CheckCheck, ArrowRight } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import styles from "./Notifications.module.css";
 
 export function NotificationsPage() {
   const { notifications, unreadCount, markAsRead, markAllAsRead, refresh } = useNotifications();
+  const navigate = useNavigate();
 
   useEffect(() => {
     refresh();
@@ -23,6 +25,13 @@ export function NotificationsPage() {
         return <AlertCircle size={20} style={{ color: "var(--color-warning-600)" }} />;
       default:
         return <Info size={20} style={{ color: "var(--color-info-600)" }} />;
+    }
+  };
+
+  const handleNotifClick = (notif: typeof notifications[0]) => {
+    if (!notif.is_read) markAsRead(notif.id);
+    if (notif.related_type === "reservation" && notif.related_id) {
+      navigate("/reservations");
     }
   };
 
@@ -54,6 +63,8 @@ export function NotificationsPage() {
             <div
               key={notif.id}
               className={[styles.card, !notif.is_read && styles.cardUnread].filter(Boolean).join(" ")}
+              onClick={() => handleNotifClick(notif)}
+              style={{ cursor: notif.related_type === "reservation" ? "pointer" : "default" }}
             >
               <div className={styles.cardInner}>
                 <div className={styles.iconWrapper}>{getIcon(notif.type)}</div>
@@ -63,10 +74,17 @@ export function NotificationsPage() {
                     {!notif.is_read && <Badge variant="success">New</Badge>}
                   </div>
                   <p className={styles.notifMessage}>{notif.message}</p>
-                  <p className={styles.notifTime}>{formatDateTime(notif.created_at)}</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginTop: "var(--space-2)" }}>
+                    <p className={styles.notifTime}>{formatDateTime(notif.created_at)}</p>
+                    {notif.related_type === "reservation" && (
+                      <span style={{ fontSize: "var(--text-xs)", color: "var(--brand)", display: "flex", alignItems: "center", gap: "2px" }}>
+                        View reservation <ArrowRight size={12} />
+                      </span>
+                    )}
+                  </div>
                 </div>
                 {!notif.is_read && (
-                  <div className={styles.markRead}>
+                  <div className={styles.markRead} onClick={(e) => e.stopPropagation()}>
                     <Button variant="ghost" size="sm" onClick={() => markAsRead(notif.id)}>
                       <CheckCheck size={16} />
                       Mark read

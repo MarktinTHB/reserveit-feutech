@@ -164,12 +164,12 @@
 .eventCancelled { background-color: var(--color-neutral-100); color: var(--color-neutral-600); }
 .eventCompleted { background-color: var(--color-accent-100); color: var(--color-accent-800); }
 
-.dark .eventPending { background-color: var(--color-warning-950); color: var(--color-warning-200); }
-.dark .eventApproved { background-color: var(--color-success-950); color: var(--color-success-200); }
-.dark .eventRejected { background-color: var(--color-error-950); color: var(--color-error-200); }
-.dark .eventRevision { background-color: var(--color-info-950); color: var(--color-info-200); }
-.dark .eventCancelled { background-color: var(--color-neutral-800); color: var(--color-neutral-300); }
-.dark .eventCompleted { background-color: var(--color-accent-950); color: var(--color-accent-200); }
+:global(.dark) .eventPending { background-color: var(--color-warning-950); color: var(--color-warning-200); }
+:global(.dark) .eventApproved { background-color: var(--color-success-950); color: var(--color-success-200); }
+:global(.dark) .eventRejected { background-color: var(--color-error-950); color: var(--color-error-200); }
+:global(.dark) .eventRevision { background-color: var(--color-info-950); color: var(--color-info-200); }
+:global(.dark) .eventCancelled { background-color: var(--color-neutral-800); color: var(--color-neutral-300); }
+:global(.dark) .eventCompleted { background-color: var(--color-accent-950); color: var(--color-accent-200); }
 
 .moreLabel {
   font-size: 0.625rem;

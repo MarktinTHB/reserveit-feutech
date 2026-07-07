@@ -39,7 +39,7 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.dark .closeButton:hover {
+:global(.dark) .closeButton:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -49,7 +49,7 @@
   border-color: var(--color-success-200);
 }
 
-.dark .success {
+:global(.dark) .success {
   background-color: var(--color-success-950);
   color: var(--color-success-200);
   border-color: var(--color-success-800);
@@ -61,7 +61,7 @@
   border-color: var(--color-error-200);
 }
 
-.dark .error {
+:global(.dark) .error {
   background-color: var(--color-error-950);
   color: var(--color-error-200);
   border-color: var(--color-error-800);
@@ -73,7 +73,7 @@
   border-color: var(--color-warning-200);
 }
 
-.dark .warning {
+:global(.dark) .warning {
   background-color: var(--color-warning-950);
   color: var(--color-warning-200);
   border-color: var(--color-warning-800);
@@ -85,7 +85,7 @@
   border-color: var(--color-info-200);
 }
 
-.dark .info {
+:global(.dark) .info {
   background-color: var(--color-info-950);
   color: var(--color-info-200);
   border-color: var(--color-info-800);

@@ -92,10 +92,10 @@
 .iconGreen { background-color: var(--color-success-100); color: var(--color-success-600); }
 .iconRed { background-color: var(--color-error-100); color: var(--color-error-600); }
 
-.dark .iconBlue { background-color: var(--color-info-950); color: var(--color-info-400); }
-.dark .iconAmber { background-color: var(--color-warning-950); color: var(--color-warning-400); }
-.dark .iconGreen { background-color: var(--color-success-950); color: var(--color-success-400); }
-.dark .iconRed { background-color: var(--color-error-950); color: var(--color-error-400); }
+:global(.dark) .iconBlue { background-color: var(--color-info-950); color: var(--color-info-400); }
+:global(.dark) .iconAmber { background-color: var(--color-warning-950); color: var(--color-warning-400); }
+:global(.dark) .iconGreen { background-color: var(--color-success-950); color: var(--color-success-400); }
+:global(.dark) .iconRed { background-color: var(--color-error-950); color: var(--color-error-400); }
 
 .grid2 {
   display: grid;
@@ -200,7 +200,7 @@
   border: 1px solid var(--color-primary-200);
 }
 
-.dark .notifUnread {
+:global(.dark) .notifUnread {
   background-color: var(--color-primary-950);
   border-color: var(--color-primary-800);
 }
