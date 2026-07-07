@@ -124,3 +124,24 @@
 .cardBody {
   padding: var(--space-6);
 }
+
+.empty {
+  text-align: center;
+  padding: var(--space-16);
+  color: var(--text-tertiary);
+}
+
+.emptyIcon {
+  margin-inline: auto;
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+.chartEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}

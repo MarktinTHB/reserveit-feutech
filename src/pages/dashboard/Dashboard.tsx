@@ -19,6 +19,7 @@ export function Dashboard() {
   const [upcoming, setUpcoming] = useState<Reservation[]>([]);
   const [recentNotifications, setRecentNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [adminStats, setAdminStats] = useState({ users: 0, facilities: 0, thisMonth: 0 });
 
   useEffect(() => {
     if (!user) return;
@@ -35,12 +36,12 @@ export function Dashboard() {
       : supabase.from("reservations").select("*", { count: "exact" }).eq("user_id", user.id));
 
     const { data: pendingData } = await (isAdminOrFaculty
-      ? supabase.from("reservations").select("*").eq("status", "pending")
-      : supabase.from("reservations").select("*").eq("user_id", user.id).eq("status", "pending"));
+      ? supabase.from("reservations").select("*").in("status", ["pending", "reviewed", "processing"])
+      : supabase.from("reservations").select("*").eq("user_id", user.id).in("status", ["pending", "reviewed", "processing"]));
 
     const { data: approvedData } = await (isAdminOrFaculty
-      ? supabase.from("reservations").select("*").eq("status", "approved")
-      : supabase.from("reservations").select("*").eq("user_id", user.id).eq("status", "approved"));
+      ? supabase.from("reservations").select("*").in("status", ["approved", "completed"])
+      : supabase.from("reservations").select("*").eq("user_id", user.id).in("status", ["approved", "completed"]));
 
     const { data: rejectedData } = await (isAdminOrFaculty
       ? supabase.from("reservations").select("*").eq("status", "rejected")
@@ -69,6 +70,17 @@ export function Dashboard() {
       .order("created_at", { ascending: false }).limit(5);
 
     if (notifData) setRecentNotifications(notifData as Notification[]);
+
+    // Fetch admin mini-stats
+    if (isAdminOrFaculty) {
+      const { count: userCount } = await supabase.from("profiles").select("*", { count: "exact", head: true });
+      const { count: facilityCount } = await supabase.from("facilities").select("*", { count: "exact", head: true });
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
+      const { count: monthCount } = await supabase.from("reservations").select("*", { count: "exact", head: true }).gte("created_at", monthStart);
+      setAdminStats({ users: userCount || 0, facilities: facilityCount || 0, thisMonth: monthCount || 0 });
+    }
+
     setLoading(false);
   };
 
@@ -192,7 +204,7 @@ export function Dashboard() {
             </div>
             <div>
               <p className={styles.miniLabel}>Total Users</p>
-              <p className={styles.miniValue}>—</p>
+              <p className={styles.miniValue}>{adminStats.users}</p>
             </div>
           </div>
           <div className={styles.miniStat}>
@@ -201,7 +213,7 @@ export function Dashboard() {
             </div>
             <div>
               <p className={styles.miniLabel}>Facilities</p>
-              <p className={styles.miniValue}>—</p>
+              <p className={styles.miniValue}>{adminStats.facilities}</p>
             </div>
           </div>
           <div className={styles.miniStat}>
@@ -210,7 +222,7 @@ export function Dashboard() {
             </div>
             <div>
               <p className={styles.miniLabel}>This Month</p>
-              <p className={styles.miniValue}>—</p>
+              <p className={styles.miniValue}>{adminStats.thisMonth}</p>
             </div>
           </div>
         </div>
