@@ -99,6 +99,8 @@ export type Database = {
           document_type: string;
           file_name: string;
           file_url: string;
+          file_size: number | null;
+          file_type: string | null;
           uploaded_at: string;
         };
       };

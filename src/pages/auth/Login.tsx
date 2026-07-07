@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/ui/Toast";
@@ -13,9 +13,20 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [signInSuccess, setSignInSuccess] = useState(false);
+  const { user, signIn } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+
+  // After successful sign-in, wait for the auth context to update with the user
+  // before navigating. This prevents the redirect loop where ProtectedRoute
+  // sees user === null and bounces back to /login.
+  useEffect(() => {
+    if (signInSuccess && user) {
+      showToast("Welcome back!", "success");
+      navigate("/dashboard");
+    }
+  }, [signInSuccess, user, navigate, showToast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,9 +41,9 @@ export function Login() {
 
     if (error) {
       showToast(error.message, "error");
+      setSignInSuccess(false);
     } else {
-      showToast("Welcome back!", "success");
-      navigate("/dashboard");
+      setSignInSuccess(true);
     }
   };
 
