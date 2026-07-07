@@ -1,0 +1,26 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.image {
+  width: auto;
+  object-fit: contain;
+}
+
+.sm { height: 2rem; }
+.md { height: 2.5rem; }
+.lg { height: 3rem; }
+.xl { height: 4rem; }
+
+.text {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-tight);
+}
+
+.accent {
+  color: var(--brand);
+}

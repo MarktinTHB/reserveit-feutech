@@ -1,0 +1,84 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-none);
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pending {
+  background-color: var(--color-warning-100);
+  color: var(--color-warning-800);
+}
+.pending .dot { background-color: var(--color-warning-500); }
+
+.dark .pending {
+  background-color: var(--color-warning-950);
+  color: var(--color-warning-200);
+}
+
+.approved {
+  background-color: var(--color-success-100);
+  color: var(--color-success-800);
+}
+.approved .dot { background-color: var(--color-success-500); }
+
+.dark .approved {
+  background-color: var(--color-success-950);
+  color: var(--color-success-200);
+}
+
+.rejected {
+  background-color: var(--color-error-100);
+  color: var(--color-error-800);
+}
+.rejected .dot { background-color: var(--color-error-500); }
+
+.dark .rejected {
+  background-color: var(--color-error-950);
+  color: var(--color-error-200);
+}
+
+.revision {
+  background-color: var(--color-info-100);
+  color: var(--color-info-800);
+}
+.revision .dot { background-color: var(--color-info-500); }
+
+.dark .revision {
+  background-color: var(--color-info-950);
+  color: var(--color-info-200);
+}
+
+.cancelled {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+}
+.cancelled .dot { background-color: var(--color-neutral-400); }
+
+.dark .cancelled {
+  background-color: var(--color-neutral-800);
+  color: var(--color-neutral-300);
+}
+
+.completed {
+  background-color: var(--color-accent-100);
+  color: var(--color-accent-800);
+}
+.completed .dot { background-color: var(--color-accent-500); }
+
+.dark .completed {
+  background-color: var(--color-accent-950);
+  color: var(--color-accent-200);
+}

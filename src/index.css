@@ -1,0 +1,3 @@
+/* Theme class management is handled by useTheme hook via document.documentElement.classList */
+/* All design tokens and global styles are in styles/global.css */
+/* This file is kept for backward compatibility */

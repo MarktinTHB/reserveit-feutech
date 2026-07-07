@@ -1,0 +1,24 @@
+.container {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding: var(--space-4);
+  animation: fadeInUp var(--transition-base) ease-out;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: var(--space-8);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

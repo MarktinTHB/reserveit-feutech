@@ -1,0 +1,252 @@
+.page {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .page { padding: var(--space-8); }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.stepButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.stepActive {
+  background-color: var(--brand);
+  color: var(--brand-foreground);
+}
+
+.stepCompleted {
+  background-color: var(--brand-light);
+  color: var(--brand);
+}
+
+.dark .stepCompleted {
+  background-color: var(--color-primary-950);
+  color: var(--color-primary-300);
+}
+
+.stepDefault {
+  background-color: var(--bg-muted);
+  color: var(--text-tertiary);
+}
+
+.stepDefault:hover {
+  background-color: var(--bg-hover);
+}
+
+.card {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  padding: var(--space-6);
+  padding-bottom: 0;
+}
+
+.cardTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cardBody {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .grid2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+.venueGroup {
+  margin-bottom: var(--space-4);
+}
+
+.venueGroupTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.venueButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.venueButton {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: all var(--transition-fast);
+}
+
+.venueButtonSelected {
+  background-color: var(--brand);
+  color: var(--brand-foreground);
+}
+
+.venueButtonDefault {
+  background-color: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+.venueButtonDefault:hover {
+  background-color: var(--bg-hover);
+}
+
+.selectedVenues {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-default);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.equipmentList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.equipmentButton {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  background-color: var(--bg-muted);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.equipmentButton:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+}
+
+.equipmentButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.equipmentCard {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.equipmentCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.removeButton {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-error-600);
+  transition: color var(--transition-fast);
+}
+
+.removeButton:hover {
+  color: var(--color-error-700);
+}
+
+.dark .removeButton {
+  color: var(--color-error-400);
+}
+
+.warning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-warning-50);
+  color: var(--color-warning-800);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}
+
+.dark .warning {
+  background-color: var(--color-warning-950);
+  color: var(--color-warning-200);
+}
+
+.documentRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-muted);
+}
+
+.documentInput {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

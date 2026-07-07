@@ -1,0 +1,20 @@
+.layout {
+  min-height: 100vh;
+  background-color: var(--bg-base);
+}
+
+.body {
+  display: flex;
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.noAuth {
+  min-height: 100vh;
+  background-color: var(--bg-base);
+}

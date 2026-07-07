@@ -1,0 +1,223 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  width: 100%;
+  border-bottom: 1px solid var(--border-default);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  transition: background-color var(--transition-base), border-color var(--transition-base);
+}
+
+.dark .header {
+  background-color: rgba(15, 23, 42, 0.8);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--navbar-height);
+  padding-inline: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .inner {
+    padding-inline: var(--space-8);
+  }
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: background-color var(--transition-fast);
+}
+
+.menuButton:hover {
+  background-color: var(--bg-hover);
+}
+
+@media (min-width: 1024px) {
+  .menuButton {
+    display: none;
+  }
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: background-color var(--transition-fast);
+  position: relative;
+}
+
+.iconButton:hover {
+  background-color: var(--bg-hover);
+}
+
+.badge {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1rem;
+  min-width: 1rem;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--color-error-500);
+  font-size: 0.625rem;
+  font-weight: var(--font-semibold);
+  color: #ffffff;
+}
+
+.profileButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.profileButton:hover {
+  background-color: var(--bg-hover);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background-color: var(--brand-light);
+  color: var(--brand);
+  flex-shrink: 0;
+}
+
+.profileName {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+@media (max-width: 767px) {
+  .profileName {
+    display: none;
+  }
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: var(--space-2);
+  width: 14rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: fadeInDown var(--transition-base) ease-out;
+}
+
+.dropdownHeader {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dropdownName {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.dropdownRole {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  text-transform: capitalize;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  transition: background-color var(--transition-fast);
+}
+
+.dropdownItem:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.dropdownDivider {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--space-1);
+}
+
+.signOut {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-error-600);
+  transition: background-color var(--transition-fast);
+}
+
+.dark .signOut {
+  color: var(--color-error-400);
+}
+
+.signOut:hover {
+  background-color: var(--color-error-50);
+}
+
+.dark .signOut:hover {
+  background-color: var(--color-error-950);
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.profileWrapper {
+  position: relative;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-2)));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

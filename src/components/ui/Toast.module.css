@@ -1,0 +1,103 @@
+.container {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid;
+  box-shadow: var(--shadow-lg);
+  min-width: 300px;
+  max-width: 28rem;
+  animation: slideInRight var(--transition-spring) ease-out;
+}
+
+.message {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  flex: 1;
+}
+
+.closeButton {
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: background-color var(--transition-fast);
+}
+
+.closeButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark .closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.success {
+  background-color: var(--color-success-50);
+  color: var(--color-success-800);
+  border-color: var(--color-success-200);
+}
+
+.dark .success {
+  background-color: var(--color-success-950);
+  color: var(--color-success-200);
+  border-color: var(--color-success-800);
+}
+
+.error {
+  background-color: var(--color-error-50);
+  color: var(--color-error-800);
+  border-color: var(--color-error-200);
+}
+
+.dark .error {
+  background-color: var(--color-error-950);
+  color: var(--color-error-200);
+  border-color: var(--color-error-800);
+}
+
+.warning {
+  background-color: var(--color-warning-50);
+  color: var(--color-warning-800);
+  border-color: var(--color-warning-200);
+}
+
+.dark .warning {
+  background-color: var(--color-warning-950);
+  color: var(--color-warning-200);
+  border-color: var(--color-warning-800);
+}
+
+.info {
+  background-color: var(--color-info-50);
+  color: var(--color-info-800);
+  border-color: var(--color-info-200);
+}
+
+.dark .info {
+  background-color: var(--color-info-950);
+  color: var(--color-info-200);
+  border-color: var(--color-info-800);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(var(--space-4));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

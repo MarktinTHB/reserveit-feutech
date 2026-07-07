@@ -1,0 +1,128 @@
+.page {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 48rem;
+}
+
+@media (min-width: 1024px) {
+  .page { padding: var(--space-8); }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  margin-top: var(--space-1);
+}
+
+.card {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  padding: var(--space-6);
+  padding-bottom: 0;
+}
+
+.cardTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cardBody {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.themeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.themeLabel {
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.themeDesc {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.themeButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.themeButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: all var(--transition-fast);
+}
+
+.themeButtonActive {
+  background-color: var(--brand);
+  color: var(--brand-foreground);
+}
+
+.themeButtonInactive {
+  background-color: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+.themeButtonInactive:hover {
+  background-color: var(--bg-active);
+}
+
+.notifRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+}
+
+.notifLabel {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  accent-color: var(--brand);
+}

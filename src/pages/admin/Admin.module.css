@@ -1,0 +1,288 @@
+.page {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .page { padding: var(--space-8); }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  margin-top: var(--space-1);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  color: var(--text-secondary);
+  background-color: var(--bg-muted);
+}
+
+.tab:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tabActive {
+  background-color: var(--brand);
+  color: var(--brand-foreground);
+}
+
+.tabActive:hover {
+  background-color: var(--brand-hover);
+  color: var(--brand-foreground);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.card {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
+  padding: var(--space-6);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.cardTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+  transition: all var(--transition-fast);
+}
+
+.iconButton:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.iconButtonDanger:hover {
+  background-color: var(--color-error-50);
+  color: var(--color-error-600);
+}
+
+.dark .iconButtonDanger:hover {
+  background-color: var(--color-error-950);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.cardMeta {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.listItem {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.listItemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.listItemName {
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.listItemEmail {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.listItemActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-16);
+  color: var(--text-tertiary);
+}
+
+.emptyIcon {
+  margin-inline: auto;
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeletonCard {
+  height: 4rem;
+  border-radius: var(--radius-lg);
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .skeletonGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .skeletonGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.skeletonFacility {
+  height: 8rem;
+  border-radius: var(--radius-xl);
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .settingsGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.settingItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.settingLabel {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.checkboxLabel {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.roleSelect {
+  width: auto;
+  min-width: 8rem;
+}
