@@ -46,11 +46,19 @@ export function Reservations() {
     setLoading(true);
 
     const isAdminOrFaculty = user.role === "admin" || user.role === "faculty";
+    const selectQuery = "*, user:profiles!reservations_user_id_profiles_fkey(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles!approvals_approver_id_profiles_fkey(full_name))";
     const query = isAdminOrFaculty
-      ? supabase.from("reservations").select("*, profiles(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles(full_name))").order("created_at", { ascending: false })
-      : supabase.from("reservations").select("*, profiles(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles(full_name))").eq("user_id", user.id).order("created_at", { ascending: false });
+      ? supabase.from("reservations").select(selectQuery).order("created_at", { ascending: false })
+      : supabase.from("reservations").select(selectQuery).eq("user_id", user.id).order("created_at", { ascending: false });
 
-    const { data } = await query;
+    const { data, error } = await query;
+    if (error) {
+      console.error("[Reservations] Query failed:", error);
+      setReservations([]);
+      setFiltered([]);
+      setLoading(false);
+      return;
+    }
     if (data) {
       setReservations(data as unknown as Reservation[]);
       setFiltered(data as unknown as Reservation[]);
@@ -123,9 +131,9 @@ export function Reservations() {
                   <p className={styles.cardMeta}>
                     {formatDate(res.activity_date)} · {res.department} · {res.event_duration}h
                   </p>
-                  {res.profiles && (
+                  {res.user && (
                     <p className={styles.cardAuthor}>
-                      By {res.profiles.full_name || res.profiles.email}
+                      By {res.user.full_name || res.user.email}
                     </p>
                   )}
                 </div>

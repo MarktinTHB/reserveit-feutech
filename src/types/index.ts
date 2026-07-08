@@ -36,7 +36,7 @@ export interface Reservation {
   status: ReservationStatus;
   total_attendees: number;
   created_at: string;
-  profiles?: { full_name: string; email: string };
+  user?: { full_name: string; email: string };
   venues?: ReservationVenue[];
   equipment?: ReservationEquipment[];
   documents?: ReservationDocument[];

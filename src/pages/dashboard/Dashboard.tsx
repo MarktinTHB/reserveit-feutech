@@ -55,10 +55,10 @@ export function Dashboard() {
     });
 
     const { data: upcomingData } = await (isAdminOrFaculty
-      ? supabase.from("reservations").select("*, profiles(full_name, email)")
+      ? supabase.from("reservations").select("*, user:profiles!reservations_user_id_profiles_fkey(full_name, email)")
           .gte("activity_date", new Date().toISOString().split("T")[0])
           .order("activity_date", { ascending: true }).limit(5)
-      : supabase.from("reservations").select("*, profiles(full_name, email)")
+      : supabase.from("reservations").select("*, user:profiles!reservations_user_id_profiles_fkey(full_name, email)")
           .eq("user_id", user.id)
           .gte("activity_date", new Date().toISOString().split("T")[0])
           .order("activity_date", { ascending: true }).limit(5));

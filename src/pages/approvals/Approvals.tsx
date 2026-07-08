@@ -39,16 +39,23 @@ export function Approvals() {
 
   const fetchReservations = async () => {
     setLoading(true);
+    const selectQuery = "*, user:profiles!reservations_user_id_profiles_fkey(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles!approvals_approver_id_profiles_fkey(full_name))";
     let query = supabase
       .from("reservations")
-      .select("*, profiles(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles(full_name))")
+      .select(selectQuery)
       .order("created_at", { ascending: false });
 
     if (statusFilter !== "all") {
       query = query.eq("status", statusFilter);
     }
 
-    const { data } = await query;
+    const { data, error } = await query;
+    if (error) {
+      console.error("[Approvals] Query failed:", error);
+      setReservations([]);
+      setLoading(false);
+      return;
+    }
     if (data) setReservations(data as unknown as Reservation[]);
     setLoading(false);
   };
@@ -222,9 +229,9 @@ export function Approvals() {
                   <p className={styles.cardMeta}>
                     {formatDate(res.activity_date)} · {res.department} · {res.event_duration}h
                   </p>
-                  {res.profiles && (
+                  {res.user && (
                     <p className={styles.cardMeta}>
-                      By {res.profiles.full_name || res.profiles.email}
+                      By {res.user.full_name || res.user.email}
                     </p>
                   )}
                 </div>

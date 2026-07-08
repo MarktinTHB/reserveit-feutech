@@ -28,15 +28,25 @@ export function CalendarPage() {
     if (!user) return;
     setLoading(true);
     const isAdminOrFaculty = user.role === "admin" || user.role === "faculty";
+    const selectQuery = "*, user:profiles!reservations_user_id_profiles_fkey(full_name, email), venues:reservation_venues(*, facility:facilities(*))";
     let query = supabase
       .from("reservations")
-      .select("*, profiles(full_name, email), venues:reservation_venues(*, facility:facilities(*))")
+      .select(selectQuery)
       .order("activity_date", { ascending: true });
     if (!isAdminOrFaculty) query = query.eq("user_id", user.id);
     const start = getViewStart();
     const end = getViewEnd();
-    query = query.gte("activity_date", start.toISOString().split("T")[0]).lte("activity_date", end.toISOString().split("T")[0]);
-    const { data } = await query;
+    // Use local date strings (YYYY-MM-DD) to avoid UTC timezone shifts
+    const startStr = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`;
+    const endStr = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, "0")}-${String(end.getDate()).padStart(2, "0")}`;
+    query = query.gte("activity_date", startStr).lte("activity_date", endStr);
+    const { data, error } = await query;
+    if (error) {
+      console.error("[Calendar] Query failed:", error);
+      setEvents([]);
+      setLoading(false);
+      return;
+    }
     if (data) setEvents(data as unknown as Reservation[]);
     setLoading(false);
   };
@@ -90,7 +100,7 @@ export function CalendarPage() {
         ))}
         {blanks.map((_, i) => <div key={`blank-${i}`} />)}
         {days.map((day) => {
-          const dayEvents = events.filter((e) => new Date(e.activity_date).toDateString() === day.toDateString());
+          const dayEvents = events.filter((e) => new Date(e.activity_date + "T00:00:00").toDateString() === day.toDateString());
           const isToday = day.toDateString() === new Date().toDateString();
           return (
             <div key={day.toISOString()} className={[styles.dayCell, isToday && styles.dayCellToday].filter(Boolean).join(" ")}>
@@ -114,7 +124,7 @@ export function CalendarPage() {
     return (
       <div className={styles.monthGrid}>
         {days.map((day) => {
-          const dayEvents = events.filter((e) => new Date(e.activity_date).toDateString() === day.toDateString());
+          const dayEvents = events.filter((e) => new Date(e.activity_date + "T00:00:00").toDateString() === day.toDateString());
           const isToday = day.toDateString() === new Date().toDateString();
           return (
             <div key={day.toISOString()} className={[styles.weekCell, isToday && styles.weekCellToday].filter(Boolean).join(" ")}>
@@ -135,7 +145,7 @@ export function CalendarPage() {
   };
 
   const renderDayView = () => {
-    const dayEvents = events.filter((e) => new Date(e.activity_date).toDateString() === currentDate.toDateString());
+    const dayEvents = events.filter((e) => new Date(e.activity_date + "T00:00:00").toDateString() === currentDate.toDateString());
     if (dayEvents.length === 0) {
       return (
         <div className={styles.empty}>
