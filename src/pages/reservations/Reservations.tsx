@@ -7,14 +7,15 @@ import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { StatusChip } from "@/components/ui/StatusChip";
-import { Link } from "react-router-dom";
-import { CalendarDays, Eye, Plus, Search, FileText } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { CalendarDays, Eye, Plus, Search, FileText, Download, Edit3 } from "lucide-react";
 import type { Reservation } from "@/types";
 import { formatDate } from "@/lib/utils";
 import styles from "./Reservations.module.css";
 
 export function Reservations() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [filtered, setFiltered] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,6 +139,11 @@ export function Reservations() {
                   )}
                 </div>
                 <div className={styles.cardActions}>
+                  {(res.status === "pending" || res.status === "revision_requested") && (
+                    <Button variant="ghost" size="sm" onClick={() => navigate(`/reservations/${res.id}/edit`)}>
+                      <Edit3 size={16} /> Edit
+                    </Button>
+                  )}
                   <Button variant="ghost" size="sm" onClick={() => setSelectedReservation(res)}>
                     <Eye size={16} /> View
                   </Button>
@@ -259,6 +265,11 @@ export function Reservations() {
                         <p className={styles.documentName}>{doc.file_name}</p>
                         <p className={styles.documentMeta}>{doc.document_type}{doc.file_size ? ` · ${(doc.file_size / 1024).toFixed(1)} KB` : ""}</p>
                       </div>
+                      {doc.file_url && doc.file_url !== "#" && (
+                        <a href={doc.file_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--brand)", display: "flex", alignItems: "center", gap: "4px", fontSize: "var(--text-sm)", flexShrink: 0 }}>
+                          <Download size={16} /> View
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>

@@ -7,20 +7,20 @@ import { Modal } from "@/components/ui/Modal";
 import { Textarea } from "@/components/ui/Textarea";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { Badge } from "@/components/ui/Badge";
-import { CheckSquare, Check, X, AlertCircle, FileText, Download, Clock, MapPin } from "lucide-react";
+import { CheckSquare, Check, X, AlertCircle, FileText, Download, Clock, MapPin, RotateCcw } from "lucide-react";
 import type { Reservation } from "@/types";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import styles from "./Approvals.module.css";
 
-type ActionType = "reviewed" | "processing" | "approve" | "reject" | "revision" | "complete";
+type ActionType = "pending" | "reviewed" | "processing" | "approve" | "reject" | "revision";
 
-const actionConfig: Record<ActionType, { label: string; status: string; notifType: "success" | "error" | "warning" | "info"; notifTitle: string }> = {
-  reviewed: { label: "Mark Reviewed", status: "reviewed", notifType: "info", notifTitle: "Reservation Reviewed" },
-  processing: { label: "Start Processing", status: "processing", notifType: "info", notifTitle: "Reservation Processing" },
-  approve: { label: "Approve", status: "approved", notifType: "success", notifTitle: "Reservation Approved" },
-  reject: { label: "Deny", status: "rejected", notifType: "error", notifTitle: "Reservation Denied" },
-  revision: { label: "Request Revision", status: "revision_requested", notifType: "warning", notifTitle: "Revision Requested" },
-  complete: { label: "Mark Completed", status: "completed", notifType: "success", notifTitle: "Reservation Completed" },
+const actionConfig: Record<ActionType, { label: string; status: string; notifType: "success" | "error" | "warning" | "info"; notifTitle: string; variant: "primary" | "secondary" | "danger" | "ghost" }> = {
+  pending: { label: "Reset to Pending", status: "pending", notifType: "info", notifTitle: "Reservation Reopened", variant: "ghost" },
+  reviewed: { label: "Mark Reviewed", status: "reviewed", notifType: "info", notifTitle: "Reservation Reviewed", variant: "secondary" },
+  processing: { label: "Start Processing", status: "processing", notifType: "info", notifTitle: "Reservation Processing", variant: "secondary" },
+  approve: { label: "Approve", status: "approved", notifType: "success", notifTitle: "Reservation Approved", variant: "primary" },
+  reject: { label: "Deny", status: "rejected", notifType: "error", notifTitle: "Reservation Denied", variant: "danger" },
+  revision: { label: "Request Revision", status: "revision_requested", notifType: "warning", notifTitle: "Revision Requested", variant: "secondary" },
 };
 
 export function Approvals() {
@@ -410,31 +410,53 @@ export function Approvals() {
             </div>
 
             <div className={styles.modalActions}>
-              {selected.status === "pending" && (
-                <Button variant="secondary" onClick={() => handleAction("reviewed")} isLoading={processing}>
-                  <Check size={16} /> Mark Reviewed
-                </Button>
-              )}
-              {selected.status === "reviewed" && (
-                <Button variant="secondary" onClick={() => handleAction("processing")} isLoading={processing}>
-                  <Clock size={16} /> Start Processing
-                </Button>
-              )}
-              {selected.status === "processing" && (
-                <Button onClick={() => handleAction("approve")} isLoading={processing}>
-                  <Check size={16} /> Approve
-                </Button>
-              )}
-              {(selected.status === "pending" || selected.status === "reviewed" || selected.status === "processing") && (
-                <>
-                  <Button variant="secondary" onClick={() => handleAction("revision")} isLoading={processing}>
-                    <AlertCircle size={16} /> Request Revision
-                  </Button>
-                  <Button variant="danger" onClick={() => handleAction("reject")} isLoading={processing}>
-                    <X size={16} /> Deny
-                  </Button>
-                </>
-              )}
+              <Button
+                variant="ghost"
+                onClick={() => handleAction("pending")}
+                isLoading={processing}
+                disabled={selected.status === "pending"}
+              >
+                <RotateCcw size={16} /> Reset to Pending
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleAction("reviewed")}
+                isLoading={processing}
+                disabled={selected.status === "reviewed"}
+              >
+                <Check size={16} /> Mark Reviewed
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleAction("processing")}
+                isLoading={processing}
+                disabled={selected.status === "processing"}
+              >
+                <Clock size={16} /> Start Processing
+              </Button>
+              <Button
+                onClick={() => handleAction("approve")}
+                isLoading={processing}
+                disabled={selected.status === "approved" || selected.status === "completed"}
+              >
+                <Check size={16} /> Approve
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleAction("revision")}
+                isLoading={processing}
+                disabled={selected.status === "revision_requested"}
+              >
+                <AlertCircle size={16} /> Request Revision
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleAction("reject")}
+                isLoading={processing}
+                disabled={selected.status === "rejected"}
+              >
+                <X size={16} /> Deny
+              </Button>
             </div>
           </div>
         )}

@@ -143,7 +143,11 @@ export function UsersPage() {
             <div key={u.id} className={styles.listItem}>
               <div className={styles.userInfo}>
                 <div className={styles.avatar}>
-                  {(u.full_name || u.email).charAt(0).toUpperCase()}
+                  {u.avatar_url ? (
+                    <img src={u.avatar_url} alt={u.full_name || "avatar"} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+                  ) : (
+                    (u.full_name || u.email).charAt(0).toUpperCase()
+                  )}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p className={styles.userName}>{u.full_name || u.email}</p>

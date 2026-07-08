@@ -46,7 +46,8 @@ export interface Reservation {
 export interface ReservationVenue {
   id: string;
   reservation_id: string;
-  facility_id: string;
+  facility_id: string | null;
+  venue_name: string | null;
   start_time: string;
   end_time: string;
   facility?: Facility;

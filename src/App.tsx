@@ -8,6 +8,8 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Landing } from "@/pages/landing/Landing";
 import { Login } from "@/pages/auth/Login";
 import { Register } from "@/pages/auth/Register";
+import { ForgotPassword } from "@/pages/auth/ForgotPassword";
+import { ResetPassword } from "@/pages/auth/ResetPassword";
 import { Dashboard } from "@/pages/dashboard/Dashboard";
 import { Facilities } from "@/pages/facilities/Facilities";
 import { ReservationForm } from "@/pages/reservations/ReservationForm";
@@ -48,6 +50,8 @@ function AppRoutes() {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route
         path="/dashboard"
         element={
@@ -80,6 +84,16 @@ function AppRoutes() {
       />
       <Route
         path="/reservations/new"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ReservationForm />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reservations/:id/edit"
         element={
           <ProtectedRoute>
             <Layout>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { useToast } from "@/components/ui/Toast";
@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-import { Sun, Moon, User, Bell } from "lucide-react";
+import { Sun, Moon, User, Bell, Camera, Trash2 } from "lucide-react";
 import styles from "./Settings.module.css";
 
 export function SettingsPage() {
@@ -19,6 +19,9 @@ export function SettingsPage() {
     department: user?.department || "",
   });
   const [saving, setSaving] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpdateProfile = async () => {
     setSaving(true);
@@ -40,12 +43,127 @@ export function SettingsPage() {
     }
   };
 
+  const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("Please select an image file", "error");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast("Image must be less than 5MB", "error");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => setAvatarPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleAvatarUpload = async () => {
+    const file = fileInputRef.current?.files?.[0];
+    if (!file || !user) return;
+
+    setAvatarUploading(true);
+    const filePath = `${user.id}/avatar-${Date.now()}`;
+
+    if (user.avatar_url) {
+      const oldPath = user.avatar_url.split("/avatars/")[1];
+      if (oldPath) await supabase.storage.from("avatars").remove([oldPath]);
+    }
+
+    const { error: uploadError } = await supabase.storage.from("avatars").upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      setAvatarUploading(false);
+      showToast(uploadError.message, "error");
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(filePath);
+    const publicUrl = urlData.publicUrl + `?t=${Date.now()}`;
+
+    const { error: updateError } = await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
+
+    setAvatarUploading(false);
+    setAvatarPreview(null);
+
+    if (updateError) {
+      showToast(updateError.message, "error");
+    } else {
+      showToast("Avatar updated successfully", "success");
+      refreshUser();
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    if (!user || !user.avatar_url) return;
+
+    setAvatarUploading(true);
+    const oldPath = user.avatar_url.split("/avatars/")[1]?.split("?")[0];
+    if (oldPath) await supabase.storage.from("avatars").remove([oldPath]);
+
+    const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
+
+    setAvatarUploading(false);
+
+    if (error) {
+      showToast(error.message, "error");
+    } else {
+      showToast("Avatar removed", "success");
+      refreshUser();
+    }
+  };
+
+  const currentAvatar = avatarPreview || user?.avatar_url;
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Settings</h1>
           <p className={styles.subtitle}>Manage your account and preferences</p>
+        </div>
+      </div>
+
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>
+            <User size={20} style={{ color: "var(--brand)" }} />
+            Profile Picture
+          </h3>
+        </div>
+        <div className={styles.cardBody}>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", flexWrap: "wrap" }}>
+            <div style={{
+              width: "80px", height: "80px", borderRadius: "50%", overflow: "hidden",
+              backgroundColor: "var(--bg-muted)", display: "flex", alignItems: "center", justifyContent: "center",
+              border: "2px solid var(--border-default)", flexShrink: 0,
+            }}>
+              {currentAvatar ? (
+                <img src={currentAvatar} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <User size={32} style={{ color: "var(--text-tertiary)" }} />
+              )}
+            </div>
+            <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
+              <input ref={fileInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleAvatarSelect} />
+              <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
+                <Camera size={16} /> {user?.avatar_url ? "Change" : "Upload"}
+              </Button>
+              {avatarPreview && (
+                <Button size="sm" onClick={handleAvatarUpload} isLoading={avatarUploading}>
+                  Save Avatar
+                </Button>
+              )}
+              {user?.avatar_url && !avatarPreview && (
+                <Button variant="ghost" size="sm" onClick={handleAvatarRemove} isLoading={avatarUploading}>
+                  <Trash2 size={16} /> Remove
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 

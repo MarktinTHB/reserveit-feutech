@@ -56,7 +56,11 @@ export function Navbar({ onMenuClick, notificationCount = 0 }: NavbarProps) {
                   className={styles.profileButton}
                 >
                   <div className={styles.avatar}>
-                    <User size={16} />
+                    {user.avatar_url ? (
+                      <img src={user.avatar_url} alt={user.full_name || "avatar"} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+                    ) : (
+                      <User size={16} />
+                    )}
                   </div>
                   <span className={styles.profileName}>
                     {user.full_name || user.email}
