@@ -418,11 +418,6 @@ export function Approvals() {
                   <Check size={16} /> Approve
                 </Button>
               )}
-              {selected.status === "approved" && (
-                <Button onClick={() => handleAction("complete")} isLoading={processing}>
-                  <Check size={16} /> Mark Completed
-                </Button>
-              )}
               {(selected.status === "pending" || selected.status === "reviewed" || selected.status === "processing") && (
                 <>
                   <Button variant="secondary" onClick={() => handleAction("revision")} isLoading={processing}>

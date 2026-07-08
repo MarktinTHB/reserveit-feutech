@@ -171,12 +171,6 @@ export function ReservationForm() {
       });
     }
 
-    await supabase.from("notifications").insert({
-      user_id: user.id, title: "Reservation Submitted",
-      message: `Your reservation "${form.activity_name}" has been submitted for approval.`,
-      type: "info", related_id: reservationId, related_type: "reservation",
-    });
-
     setLoading(false);
     showToast("Reservation submitted successfully!", "success");
     navigate("/reservations");

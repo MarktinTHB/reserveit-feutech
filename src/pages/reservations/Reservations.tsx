@@ -85,10 +85,13 @@ export function Reservations() {
           options={[
             { value: "", label: "All Statuses" },
             { value: "pending", label: "Pending" },
+            { value: "reviewed", label: "Reviewed" },
+            { value: "processing", label: "Processing" },
             { value: "approved", label: "Approved" },
-            { value: "rejected", label: "Rejected" },
+            { value: "rejected", label: "Denied" },
             { value: "revision_requested", label: "Revision Requested" },
             { value: "cancelled", label: "Cancelled" },
+            { value: "completed", label: "Completed" },
           ]}
         />
       </div>

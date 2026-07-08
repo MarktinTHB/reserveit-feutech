@@ -33,8 +33,6 @@ export function CalendarPage() {
       .select("*, profiles(full_name, email), venues:reservation_venues(*, facility:facilities(*))")
       .order("activity_date", { ascending: true });
     if (!isAdminOrFaculty) query = query.eq("user_id", user.id);
-    // Calendar only shows approved and completed reservations
-    query = query.in("status", ["approved", "completed"]);
     const start = getViewStart();
     const end = getViewEnd();
     query = query.gte("activity_date", start.toISOString().split("T")[0]).lte("activity_date", end.toISOString().split("T")[0]);
@@ -69,6 +67,8 @@ export function CalendarPage() {
 
   const statusClassMap: Record<string, string> = {
     pending: styles.eventPending,
+    reviewed: styles.eventReviewed,
+    processing: styles.eventProcessing,
     approved: styles.eventApproved,
     rejected: styles.eventRejected,
     revision_requested: styles.eventRevision,
