@@ -74,10 +74,21 @@
 }
 
 .card {
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-default);
-  background-color: var(--bg-surface);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 4px 24px rgba(5, 150, 105, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+:global(.dark) .card {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .cardHeader {

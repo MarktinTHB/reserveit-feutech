@@ -12,6 +12,25 @@
   flex: 1;
   min-width: 0;
   overflow-x: hidden;
+  background: linear-gradient(
+    145deg,
+    var(--color-primary-50) 0%,
+    var(--bg-base) 35%,
+    var(--color-accent-50) 70%,
+    var(--bg-base) 100%
+  );
+  background-attachment: fixed;
+}
+
+:global(.dark) .main {
+  background: linear-gradient(
+    145deg,
+    rgba(2, 44, 34, 0.25) 0%,
+    var(--bg-base) 35%,
+    rgba(4, 47, 46, 0.18) 70%,
+    var(--bg-base) 100%
+  );
+  background-attachment: fixed;
 }
 
 .noAuth {
