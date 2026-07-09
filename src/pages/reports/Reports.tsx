@@ -34,6 +34,8 @@ export function Reports() {
   const fetchAnalytics = async () => {
     setLoading(true);
 
+    await supabase.rpc("mark_completed_reservations");
+
     const monthsBack = period === "1month" ? 1 : period === "3months" ? 3 : period === "6months" ? 6 : 12;
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - monthsBack);

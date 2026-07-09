@@ -46,6 +46,8 @@ export function Reservations() {
     if (!user) return;
     setLoading(true);
 
+    await supabase.rpc("mark_completed_reservations");
+
     const isAdminOrFaculty = user.role === "admin" || user.role === "faculty";
     const selectQuery = "*, user:profiles!reservations_user_id_profiles_fkey(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles!approvals_approver_id_profiles_fkey(full_name))";
     const query = isAdminOrFaculty

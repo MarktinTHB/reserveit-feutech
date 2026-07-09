@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/layout/Logo";
@@ -7,7 +8,23 @@ import {
 } from "lucide-react";
 import styles from "./Landing.module.css";
 
+const HERO_IMAGES = [
+  "/images/hero/reserveit1.jpg",
+  "/images/hero/reserveit2.jpg",
+  "/images/hero/reserveit3.jpg",
+  "/images/hero/reserveit5.jpg",
+  "/images/hero/reserveit6.jpg",
+];
+
 export function Landing() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
   const features = [
     { icon: CalendarDays, title: "Easy Reservations", description: "Book school facilities online with a comprehensive multi-step form." },
     { icon: CheckCircle, title: "Approval Workflow", description: "Streamlined approval process with real-time status tracking." },
@@ -27,7 +44,16 @@ export function Landing() {
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
-        <div className={styles.heroBg} />
+        <div className={styles.heroSlideshow} aria-hidden="true">
+          {HERO_IMAGES.map((src, i) => (
+            <div
+              key={src}
+              className={[styles.heroSlide, i === activeSlide ? styles.heroSlideActive : ""].join(" ")}
+              style={{ backgroundImage: `url(${src})` }}
+            />
+          ))}
+          <div className={styles.heroOverlay} />
+        </div>
         <div className={styles.heroContent}>
           <div className={styles.heroInner}>
             <div className={styles.logoCenter}>

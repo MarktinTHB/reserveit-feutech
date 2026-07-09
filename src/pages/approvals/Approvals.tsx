@@ -39,6 +39,9 @@ export function Approvals() {
 
   const fetchReservations = async () => {
     setLoading(true);
+
+    await supabase.rpc("mark_completed_reservations");
+
     const selectQuery = "*, user:profiles!reservations_user_id_profiles_fkey(full_name, email), venues:reservation_venues(*, facility:facilities(*)), equipment:reservation_equipment(*), documents:reservation_documents(*), approvals(*, approver:profiles!approvals_approver_id_profiles_fkey(full_name))";
     let query = supabase
       .from("reservations")

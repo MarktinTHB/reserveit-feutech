@@ -29,6 +29,9 @@ export function Dashboard() {
   const fetchDashboardData = async () => {
     if (!user) return;
     setLoading(true);
+
+    await supabase.rpc("mark_completed_reservations");
+
     const isAdminOrFaculty = user.role === "admin" || user.role === "faculty";
 
     const { count } = await (isAdminOrFaculty
