@@ -115,6 +115,14 @@
   border-color: rgba(255, 255, 255, 0.95);
 }
 
+:global(.dark) .card:hover {
+  box-shadow:
+    0 10px 32px rgba(0, 0, 0, 0.45),
+    0 4px 10px rgba(16, 185, 129, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-color: rgba(16, 185, 129, 0.18);
+}
+
 .cardHeader {
   display: flex;
   align-items: flex-start;
@@ -207,6 +215,13 @@
     0 2px 6px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transform: translateY(-1px);
+}
+
+:global(.dark) .listItem:hover {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(16, 185, 129, 0.06);
+  border-color: rgba(16, 185, 129, 0.15);
 }
 
 .listItemInfo {

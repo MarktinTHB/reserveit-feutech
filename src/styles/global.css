@@ -26,7 +26,7 @@ html {
 h1 {
   font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.015em;
 }
 
 body {

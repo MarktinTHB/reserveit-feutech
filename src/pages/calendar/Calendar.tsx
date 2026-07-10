@@ -30,19 +30,17 @@ export function CalendarPage() {
 
     await supabase.rpc("mark_completed_reservations");
 
-    const isAdminOrFaculty = user.role === "admin" || user.role === "faculty";
     const selectQuery = "*, user:profiles!reservations_user_id_profiles_fkey(full_name, email), venues:reservation_venues(*, facility:facilities(*))";
-    let query = supabase
+    const query = supabase
       .from("reservations")
       .select(selectQuery)
       .order("activity_date", { ascending: true });
-    if (!isAdminOrFaculty) query = query.eq("user_id", user.id);
     const start = getViewStart();
     const end = getViewEnd();
     // Use local date strings (YYYY-MM-DD) to avoid UTC timezone shifts
     const startStr = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`;
     const endStr = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, "0")}-${String(end.getDate()).padStart(2, "0")}`;
-    query = query.gte("activity_date", startStr).lte("activity_date", endStr);
+    query.gte("activity_date", startStr).lte("activity_date", endStr);
     const { data, error } = await query;
     if (error) {
       console.error("[Calendar] Query failed:", error);
@@ -105,15 +103,31 @@ export function CalendarPage() {
         {days.map((day) => {
           const dayEvents = events.filter((e) => new Date(e.activity_date + "T00:00:00").toDateString() === day.toDateString());
           const isToday = day.toDateString() === new Date().toDateString();
+          const maxVisible = 5;
           return (
-            <div key={day.toISOString()} className={[styles.dayCell, isToday && styles.dayCellToday].filter(Boolean).join(" ")}>
+            <div
+              key={day.toISOString()}
+              className={[styles.dayCell, isToday && styles.dayCellToday].filter(Boolean).join(" ")}
+              onClick={() => { setCurrentDate(new Date(day)); setView("day"); }}
+            >
               <div className={[styles.dayNumber, isToday && styles.dayNumberToday].filter(Boolean).join(" ")}>{day.getDate()}</div>
-              {dayEvents.slice(0, 3).map((event) => (
-                <button key={event.id} onClick={() => setSelectedEvent(event)} className={[styles.eventButton, statusClassMap[event.status]].join(" ")}>
+              {dayEvents.slice(0, maxVisible).map((event) => (
+                <button
+                  key={event.id}
+                  onClick={(e) => { e.stopPropagation(); setSelectedEvent(event); }}
+                  className={[styles.eventButton, statusClassMap[event.status]].join(" ")}
+                >
                   {event.activity_name}
                 </button>
               ))}
-              {dayEvents.length > 3 && <div className={styles.moreLabel}>+{dayEvents.length - 3} more</div>}
+              {dayEvents.length > maxVisible && (
+                <button
+                  className={styles.moreLabel}
+                  onClick={(e) => { e.stopPropagation(); setCurrentDate(new Date(day)); setView("day"); }}
+                >
+                  +{dayEvents.length - maxVisible} more
+                </button>
+              )}
             </div>
           );
         })}

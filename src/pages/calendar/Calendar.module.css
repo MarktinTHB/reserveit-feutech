@@ -133,6 +133,13 @@
   border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
   background-color: var(--bg-surface);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dayCell:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-strong);
 }
 
 .dayCellToday {
@@ -188,8 +195,20 @@
 
 .moreLabel {
   font-size: 0.625rem;
-  color: var(--text-muted);
+  color: var(--brand);
+  font-weight: var(--font-medium);
   text-align: center;
+  padding: var(--space-1) var(--space-2);
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.moreLabel:hover {
+  color: var(--brand-hover);
+  text-decoration: underline;
 }
 
 .weekCell {
